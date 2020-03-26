@@ -4,6 +4,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
@@ -27,6 +28,8 @@ import com.google.zxing.client.android.BeepManager;
 import com.google.zxing.client.android.InactivityTimer;
 import com.google.zxing.client.android.Intents;
 import com.google.zxing.client.android.R;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,9 +64,6 @@ public class CaptureManager {
     private static final String SAVED_ORIENTATION_LOCK = "SAVED_ORIENTATION_LOCK";
     private boolean returnBarcodeImagePath = false;
 
-    private boolean showDialogIfMissingCameraPermission = true;
-    private String missingCameraPermissionDialogMessage = "";
-
     private boolean destroyed = false;
 
     private InactivityTimer inactivityTimer;
@@ -79,7 +79,13 @@ public class CaptureManager {
             barcodeView.pause();
             beepManager.playBeepSoundAndVibrate();
 
-            handler.post(() -> returnResult(result));
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    returnResult(result);
+                }
+            });
+
         }
 
         @Override
@@ -106,30 +112,31 @@ public class CaptureManager {
 
         @Override
         public void cameraError(Exception error) {
-            displayFrameworkBugMessageAndExit(
-                    activity.getString(R.string.zxing_msg_camera_framework_bug)
-            );
+            displayFrameworkBugMessageAndExit();
         }
 
         @Override
         public void cameraClosed() {
-            if (finishWhenClosed) {
+            if(finishWhenClosed) {
                 Log.d(TAG, "Camera closed; finishing activity");
                 finish();
             }
         }
     };
 
-    public CaptureManager(Activity activity, DecoratedBarcodeView barcodeView) {
+    public CaptureManager(Activity activity, DecoratedBarcodeView v) {
         this.activity = activity;
-        this.barcodeView = barcodeView;
+        this.barcodeView = v;
         barcodeView.getBarcodeView().addStateListener(stateListener);
 
         handler = new Handler();
 
-        inactivityTimer = new InactivityTimer(activity, () -> {
-            Log.d(TAG, "Finishing due to inactivity");
-            finish();
+        inactivityTimer = new InactivityTimer(activity, new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "Finishing due to inactivity");
+                finish();
+            }
         });
 
         beepManager = new BeepManager(activity);
@@ -152,7 +159,7 @@ public class CaptureManager {
             this.orientationLock = savedInstanceState.getInt(SAVED_ORIENTATION_LOCK, ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         }
 
-        if (intent != null) {
+        if(intent != null) {
             // Only lock the orientation if it's not locked to something else yet
             boolean orientationLocked = intent.getBooleanExtra(Intents.Scan.ORIENTATION_LOCKED, true);
             if (orientationLocked) {
@@ -167,15 +174,14 @@ public class CaptureManager {
                 beepManager.setBeepEnabled(false);
             }
 
-            if (intent.hasExtra(Intents.Scan.SHOW_MISSING_CAMERA_PERMISSION_DIALOG)) {
-                setShowMissingCameraPermissionDialog(
-                        intent.getBooleanExtra(Intents.Scan.SHOW_MISSING_CAMERA_PERMISSION_DIALOG, true),
-                        intent.getStringExtra(Intents.Scan.MISSING_CAMERA_PERMISSION_DIALOG_MESSAGE)
-                );
-            }
-
             if (intent.hasExtra(Intents.Scan.TIMEOUT)) {
-                handler.postDelayed(this::returnResultTimeout, intent.getLongExtra(Intents.Scan.TIMEOUT, 0L));
+                Runnable runnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        returnResultTimeout();
+                    }
+                };
+                handler.postDelayed(runnable, intent.getLongExtra(Intents.Scan.TIMEOUT, 0L));
             }
 
             if (intent.getBooleanExtra(Intents.Scan.BARCODE_IMAGE_ENABLED, false)) {
@@ -226,7 +232,7 @@ public class CaptureManager {
      * Call from Activity#onResume().
      */
     public void onResume() {
-        if (Build.VERSION.SDK_INT >= 23) {
+        if(Build.VERSION.SDK_INT >= 23) {
             openCameraWithPermission();
         } else {
             barcodeView.resume();
@@ -241,35 +247,32 @@ public class CaptureManager {
         if (ContextCompat.checkSelfPermission(this.activity, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             barcodeView.resume();
-        } else if (!askedPermission) {
+        } else if(!askedPermission) {
             ActivityCompat.requestPermissions(this.activity,
                     new String[]{Manifest.permission.CAMERA},
                     cameraPermissionReqCode);
             askedPermission = true;
-        } // else wait for permission result
+        } else {
+            // Wait for permission result
+        }
     }
 
     /**
      * Call from Activity#onRequestPermissionsResult
-     * @param requestCode The request code passed in {@link androidx.core.app.ActivityCompat#requestPermissions(Activity, String[], int)}.
+     * @param requestCode The request code passed in {@link ActivityCompat#requestPermissions(Activity, String[], int)}.
      * @param permissions The requested permissions.
      * @param grantResults The grant results for the corresponding permissions
      *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
      *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
      */
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        if (requestCode == cameraPermissionReqCode) {
+        if(requestCode == cameraPermissionReqCode) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // permission was granted
                 barcodeView.resume();
             } else {
-                setMissingCameraPermissionResult();
-
-                if (showDialogIfMissingCameraPermission) {
-                    displayFrameworkBugMessageAndExit(missingCameraPermissionDialogMessage);
-                } else {
-                    closeAndFinish();
-                }
+                // TODO: display better error message.
+                displayFrameworkBugMessageAndExit();
             }
         }
     }
@@ -374,7 +377,7 @@ public class CaptureManager {
     }
 
     protected void closeAndFinish() {
-        if (barcodeView.getBarcodeView().isCameraClosed()) {
+        if(barcodeView.getBarcodeView().isCameraClosed()) {
             finish();
         } else {
             finishWhenClosed = true;
@@ -382,12 +385,6 @@ public class CaptureManager {
 
         barcodeView.pause();
         inactivityTimer.cancel();
-    }
-
-    private void setMissingCameraPermissionResult() {
-        Intent intent = new Intent(Intents.Scan.ACTION);
-        intent.putExtra(Intents.Scan.MISSING_CAMERA_PERMISSION, true);
-        activity.setResult(Activity.RESULT_CANCELED, intent);
     }
 
     protected void returnResultTimeout() {
@@ -398,25 +395,40 @@ public class CaptureManager {
     }
 
     protected void returnResult(BarcodeResult rawResult) {
-        Intent intent = resultIntent(rawResult, getBarcodeImagePath(rawResult));
-        activity.setResult(Activity.RESULT_OK, intent);
-        closeAndFinish();
+
+        // TODO: 스캔결과를 처리한다.
+
+        IntentResult scanResult = IntentIntegrator.parseActivityResult(0x0000c0de, Activity.RESULT_OK, resultIntent(rawResult, getBarcodeImagePath(rawResult)));
+        String re = scanResult.getContents();
+        String message = re;
+
+        Log.d(TAG, "### result :" + re);
+
+
+//        Intent intent = resultIntent(rawResult, getBarcodeImagePath(rawResult));
+//        activity.setResult(Activity.RESULT_OK, intent);
+//        closeAndFinish();
     }
 
-    protected void displayFrameworkBugMessageAndExit(String message) {
+    protected void displayFrameworkBugMessageAndExit() {
         if (activity.isFinishing() || this.destroyed || finishWhenClosed) {
             return;
         }
-
-        if (message.isEmpty()) {
-            message = activity.getString(R.string.zxing_msg_camera_framework_bug);
-        }
-
         AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         builder.setTitle(activity.getString(R.string.zxing_app_name));
-        builder.setMessage(message);
-        builder.setPositiveButton(R.string.zxing_button_ok, (dialog, which) -> finish());
-        builder.setOnCancelListener(dialog -> finish());
+        builder.setMessage(activity.getString(R.string.zxing_msg_camera_framework_bug));
+        builder.setPositiveButton(R.string.zxing_button_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialog) {
+                finish();
+            }
+        });
         builder.show();
     }
 
@@ -425,31 +437,6 @@ public class CaptureManager {
     }
 
     public static void setCameraPermissionReqCode(int cameraPermissionReqCode) {
-        CaptureManager.cameraPermissionReqCode = cameraPermissionReqCode;
-    }
-
-    /**
-     * If set to true, shows the default error dialog if camera permission is missing.
-     * <p>
-     * If set to false, instead the capture manager just finishes.
-     * <p>
-     * In both cases, the activity result is set to {@link Intents.Scan#MISSING_CAMERA_PERMISSION}
-     * and cancelled
-     */
-    public void setShowMissingCameraPermissionDialog(boolean visible) {
-        setShowMissingCameraPermissionDialog(visible, "");
-    }
-
-    /**
-     * If set to true, shows the specified error dialog message if camera permission is missing.
-     * <p>
-     * If set to false, instead the capture manager just finishes.
-     * <p>
-     * In both cases, the activity result is set to {@link Intents.Scan#MISSING_CAMERA_PERMISSION}
-     * and cancelled
-     */
-    public void setShowMissingCameraPermissionDialog(boolean visible, String message) {
-        showDialogIfMissingCameraPermission = visible;
-        missingCameraPermissionDialogMessage = message != null ? message : "";
+        CaptureManager.setCameraPermissionReqCode(cameraPermissionReqCode);
     }
 }
