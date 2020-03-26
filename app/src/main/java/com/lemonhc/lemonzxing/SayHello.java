@@ -8,7 +8,6 @@ import android.util.Log;
  */
 public class SayHello {
 
-
     public void print(){
         Log.d("test@", "hello lemon world");
     }
