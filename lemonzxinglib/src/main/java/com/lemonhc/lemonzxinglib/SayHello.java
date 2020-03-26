@@ -1,4 +1,4 @@
-package com.lemonhc.lemonzxing;
+package com.lemonhc.lemonzxinglib;
 
 import android.util.Log;
 
