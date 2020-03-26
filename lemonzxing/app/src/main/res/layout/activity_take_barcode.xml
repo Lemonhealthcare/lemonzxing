@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/zxing_transparent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.journeyapps.barcodescanner.BarcodeView
+                android:id="@+id/zxing_barcode_surface"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.journeyapps.barcodescanner.ViewfinderView
+                android:id="@+id/zxing_viewfinder_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageView
+                android:id="@+id/activity_take_barcode_close_button"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginTop="30dp"
+                android:layout_marginEnd="30dp"
+                android:src="@drawable/close_x"
+                android:tint="@android:color/white" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="100dp"
+                android:layout_marginRight="100dp"
+                android:src="@drawable/camera_lo" />
+
+            <TextView
+                android:id="@+id/activity_take_barcode_button_manual_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_centerInParent="true"
+                android:layout_marginBottom="30dp"
+                android:background="@android:color/holo_red_dark"
+                android:paddingStart="30dp"
+                android:paddingTop="10dp"
+                android:paddingEnd="30dp"
+                android:paddingBottom="10dp"
+                android:text="환자번호 직접입력"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
+    </LinearLayout>
+</merge>
