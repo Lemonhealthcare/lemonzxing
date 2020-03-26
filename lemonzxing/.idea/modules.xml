@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" group="lemonzxing/app" />
+      <module fileurl="file://$PROJECT_DIR$/lemonzxing.iml" filepath="$PROJECT_DIR$/lemonzxing.iml" group="lemonzxing" />
+      <module fileurl="file://$PROJECT_DIR$/zxing/zxing-android-embedded/zxing-android-embedded.iml" filepath="$PROJECT_DIR$/zxing/zxing-android-embedded/zxing-android-embedded.iml" group="lemonzxing/zxing-android-embedded" />
+    </modules>
+  </component>
+</project>
