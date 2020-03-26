@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/sungheekang/Downloads/zxing-android-embedded-master/sample/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ca/values-ca.xml",
+            "outputFile": "/Users/sungheekang/Documents/repo/customlibrary/zxing/sample/build/intermediates/incremental/mergeDebugResources/merged.dir/values-ca/values-ca.xml",
             "map": [
                 {
                     "source": "/Users/sungheekang/.gradle/caches/transforms-2/files-2.1/cb638d34b2ccfd54600d1e894c60783a/core-1.1.0/res/values-ca/values-ca.xml",
@@ -31,7 +31,7 @@
                     }
                 },
                 {
-                    "source": "/Users/sungheekang/Downloads/zxing-android-embedded-master/zxing-android-embedded/build/intermediates/packaged_res/debug/values-ca/values-ca.xml",
+                    "source": "/Users/sungheekang/Documents/repo/customlibrary/zxing/zxing-android-embedded/build/intermediates/packaged_res/debug/values-ca/values-ca.xml",
                     "from": {
                         "startLines": "2,3,4,5",
                         "startColumns": "4,4,4,4",

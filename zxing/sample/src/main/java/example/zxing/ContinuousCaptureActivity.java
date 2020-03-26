@@ -37,7 +37,7 @@ public class ContinuousCaptureActivity extends Activity {
             }
 
             lastText = result.getText();
-            barcodeView.setStatusText(result.getText());
+//            barcodeView.setStatusText(result.getText());
 
             beepManager.playBeepSoundAndVibrate();
 

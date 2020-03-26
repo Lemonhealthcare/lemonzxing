@@ -1,7 +1,7 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/sungheekang/Downloads/zxing-android-embedded-master/sample/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v24/values-v24.xml",
+            "outputFile": "/Users/sungheekang/Documents/repo/customlibrary/zxing/sample/build/intermediates/incremental/mergeDebugResources/merged.dir/values-v24/values-v24.xml",
             "map": [
                 {
                     "source": "/Users/sungheekang/.gradle/caches/transforms-2/files-2.1/136c6f924a9fa9480cef62dd9513673b/media-1.0.0/res/values-v24/values-v24.xml",

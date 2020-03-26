@@ -47,11 +47,11 @@ public class CustomScannerActivity extends Activity implements
 
         capture = new CaptureManager(this, barcodeScannerView);
         capture.initializeFromIntent(getIntent(), savedInstanceState);
-        capture.setShowMissingCameraPermissionDialog(false);
+//        capture.setShowMissingCameraPermissionDialog(false);
         capture.decode();
 
         changeMaskColor(null);
-        changeLaserVisibility(true);
+//        changeLaserVisibility(true);
     }
 
     @Override
@@ -103,12 +103,12 @@ public class CustomScannerActivity extends Activity implements
     public void changeMaskColor(View view) {
         Random rnd = new Random();
         int color = Color.argb(100, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
-        viewfinderView.setMaskColor(color);
+//        viewfinderView.setMaskColor(color);
     }
 
-    public void changeLaserVisibility(boolean visible) {
-        viewfinderView.setLaserVisibility(visible);
-    }
+//    public void changeLaserVisibility(boolean visible) {
+//        viewfinderView.setLaserVisibility(visible);
+//    }
 
     @Override
     public void onTorchOn() {
