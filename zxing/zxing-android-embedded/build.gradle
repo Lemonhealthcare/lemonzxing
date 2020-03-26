@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
+//apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
 
 
 ext.artifactId = 'zxing-android-embedded'
 
 dependencies {
-    api project.zxingCore
+    api 'com.google.zxing:core:3.4.0'
 
     api 'androidx.legacy:legacy-support-v4:1.0.0'
 
@@ -96,17 +96,17 @@ project.afterEvaluate {
 // To release, place bintray_user and bintray_key properties in ~/.gradle/gradle.properties,
 // and run ./gradlew clean assembleRelease bintrayUpload
 
-if (project.hasProperty('bintray_user') && project.hasProperty('bintray_key')) {
-    bintray {
-        user = bintray_user
-        key = bintray_key
-        publications = ['maven']
-        publish = true
-        pkg {
-            userOrg = 'journeyapps'
-            repo = 'maven'
-            name = 'zxing-android-embedded'
-        }
-    }
-}
+//if (project.hasProperty('bintray_user') && project.hasProperty('bintray_key')) {
+//    bintray {
+//        user = bintray_user
+//        key = bintray_key
+//        publications = ['maven']
+//        publish = true
+//        pkg {
+//            userOrg = 'journeyapps'
+//            repo = 'maven'
+//            name = 'zxing-android-embedded'
+//        }
+//    }
+//}
 

@@ -1,3 +1,4 @@
 rootProject.name='lemonzxing'
-include ':app'
+include ':app', ':zxing-android-embedded'
 include ':lemonzxinglib'
+project(':zxing-android-embedded').projectDir = new File('zxing/zxing-android-embedded')
