@@ -4,6 +4,6 @@
 
 # lemonzxing
 
-```
-implementation 'com.github.Lemonhealthcare:lemonzxing:1.0.8'
+```gradle
+implementation 'com.github.Lemonhealthcare:lemonzxing:1.0.9'
 ```
