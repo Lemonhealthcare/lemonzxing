@@ -3,5 +3,6 @@
 
 
 # lemonzxing
-f1rst t3st
+
+implementation 'com.github.Lemonhealthcare:lemonzxing:1.0.8'
 
