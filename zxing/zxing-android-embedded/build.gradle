@@ -6,7 +6,7 @@ apply plugin: 'maven-publish'
 ext.artifactId = 'zxing-android-embedded'
 
 dependencies {
-    api 'com.google.zxing:core:3.4.0'
+    api 'com.google.zxing:core:3.3.0'
 
     api 'androidx.legacy:legacy-support-v4:1.0.0'
 
@@ -45,7 +45,7 @@ android {
         unitTests.returnDefaultValues = true
     }
     defaultConfig {
-        minSdkVersion 24
+        minSdkVersion 21
     }
 
     buildTypes {

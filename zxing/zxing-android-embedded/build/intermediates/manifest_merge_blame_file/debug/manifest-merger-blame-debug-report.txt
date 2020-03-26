@@ -18,7 +18,7 @@
 18    package="com.google.zxing.client.android"
 19    android:versionName=".debug" >
 20
-21    <uses-sdk android:minSdkVersion="24" />
+21    <uses-sdk android:minSdkVersion="21" />
 21-->/Users/sungheekang/Documents/repo/customlibrary/zxing/zxing-android-embedded/AndroidManifest.xml
 22
 23    <uses-permission android:name="android.permission.CAMERA" />

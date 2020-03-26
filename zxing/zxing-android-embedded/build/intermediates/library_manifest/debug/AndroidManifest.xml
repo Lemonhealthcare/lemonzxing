@@ -18,7 +18,7 @@
     package="com.google.zxing.client.android"
     android:versionName=".debug" >
 
-    <uses-sdk android:minSdkVersion="24" />
+    <uses-sdk android:minSdkVersion="21" />
 
     <uses-permission android:name="android.permission.CAMERA" />
 
